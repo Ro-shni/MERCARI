@@ -18,10 +18,10 @@ import string
 import nltk
 import spacy
 
-with open("svm_model.pkl", "rb") as file:
+with open("svm_model (3).pkl", "rb") as file:
     model = pickle.load(file)
 
-with open("tfidf_vectorizer.pkl", "rb") as file:
+with open("tfidf_vectorizer (3).pkl", "rb") as file:
     vectorizer = pickle.load(file)
 
 print(f"Streamlit version: {st.__version__}")
@@ -30,8 +30,10 @@ nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
 def clean_text(text):
-    text = text.lower()
-    return text.strip()
+    if isinstance(text, str):  # Check if the text is a string
+        text = text.lower()  # Convert text to lowercase
+        return text.strip()  # Remove leading and trailing whitespaces
+    return ""
 
 def remove_punctuation(text):
     punctuation_free = "".join([i for i in text if i not in string.punctuation])
