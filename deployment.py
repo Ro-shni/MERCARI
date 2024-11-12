@@ -59,7 +59,10 @@ image = Image.open("sentiment.png")
 st.image(image, use_column_width=True)
 
 st.subheader("Enter your text here:")
-user_input = st.text_area("")
+
+
+user_input = "such an amazing app to use, best selling app"
+
 
 if user_input:
     user_input = clean_text(user_input)
@@ -70,13 +73,6 @@ if user_input:
     user_input = lemmatizer(user_input)
 
 if user_input:
-    user_input = clean_text(user_input)
-    user_input = remove_punctuation(user_input)
-    user_input = user_input.lower()
-    user_input = tokenization(user_input)
-    user_input = remove_stopwords(user_input)
-    user_input = lemmatizer(user_input)
-
     # Vectorizing the text
     text_vectorized = vectorizer.transform([user_input])
 
