@@ -7,50 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/16beizEZMWK7xr0E4HJGgMOj8vqMrWGRK
 """
 
-name = ""
-identifier = "com.mercariapp.mercari"
-country = "us"
-lookup_period = "365d" #200reviews
-
-pip install google-play-scraper pandas
-
-from google_play_scraper import reviews, Sort
-import pandas as pd
-
-# Specify the App ID
-app_id = 'com.mercariapp.mercari'  # Replace this with your app's ID
-
-# Fetch reviews
-result, _ = reviews(
-    app_id,
-    lang='en',  # Language of the reviews
-    country='us',  # Country
-    sort=Sort.NEWEST,  # Sort by newest reviews
-    count=500  # Number of reviews to fetch
-)
-
-# Extract relevant fields
-reviews_data = []
-for r in result:
-    reviews_data.append({
-        'reviewId': r['reviewId'],
-        'userName': r['userName'],
-        'content': r['content'],
-        'score': r['score'],  # Rating given by the user
-        'thumbsUpCount': r['thumbsUpCount'],
-        'reviewCreatedVersion': r['reviewCreatedVersion'],
-        'at': r['at'].strftime('%Y-%m-%d %H:%M:%S')  # Timestamp of the review
-    })
-
-# Convert to DataFrame
-df = pd.DataFrame(reviews_data)
-
-# Save to CSV
-csv_filename = 'playstore_reviews.csv'
-df.to_csv(csv_filename, index=False)
-
-print(f"Reviews have been saved to {csv_filename}")
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -354,8 +310,6 @@ fig.show()
 model_filename = 'svm_model.pkl'
 with open(model_filename,'wb') as model_file:
   pickle.dump(model_sv,model_file)
-
-!pip install streamlit
 
 import streamlit as st
 import pickle
