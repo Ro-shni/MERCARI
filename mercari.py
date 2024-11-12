@@ -115,8 +115,10 @@ fig.show()
 """#NLP"""
 
 def clean_text(text):
-  text = text.lower()
-  return text.strip()
+    if isinstance(text, str):  # Check if the text is a string
+        text = text.lower()  # Convert text to lowercase
+        return text.strip()  # Remove leading and trailing whitespaces
+    return ""
 
 df_new.content = df_new.content.apply(lambda x: clean_text(x))
 
