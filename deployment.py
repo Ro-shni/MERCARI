@@ -8,7 +8,7 @@ Original file is located at
 """
 
 #!pip install streamlit
-"""
+
 import streamlit as st
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -69,98 +69,29 @@ if user_input:
     user_input = remove_stopwords(user_input)
     user_input = lemmatizer(user_input)
 
-if st.button("Predict"):
-    if user_input:
-        text_vectorized = vectorizer.transform([user_input])
-        prediction = model.predict(text_vectorized)[0]
-        st.header("Prediction:")
-        if prediction == -1:
-            st.subheader("The sentiment of the given text is: Negative")
-        elif prediction == 0:
-            st.subheader("The sentiment of the given text is: Neutral")
-        elif prediction == 1:
-            st.subheader("The sentiment of the given text is: Positive")
-    else:
-        st.subheader("Please enter a text for prediction.")
-
-"""
-import pickle
-import nltk
-import spacy
-import re
-import string
-import streamlit as st
-from PIL import Image
-from nltk.corpus import stopwords
-
-# Load the model and vectorizer
-with open("svm_model (3).pkl", "rb") as file:
-    model = pickle.load(file)
-
-with open("tfidf_vectorizer (3).pkl", "rb") as file:
-    vectorizer = pickle.load(file)
-
-print(f"Streamlit version: {st.__version__}")
-
-nltk.download('stopwords')
-stopwords = nltk.corpus.stopwords.words('english')
-
-# Text preprocessing functions
-def clean_text(text):
-    if isinstance(text, str):  # Check if the text is a string
-        text = text.lower()  # Convert text to lowercase
-        return text.strip()  # Remove leading and trailing whitespaces
-    return ""
-
-def remove_punctuation(text):
-    punctuation_free = "".join([i for i in text if i not in string.punctuation])
-    return punctuation_free
-
-def tokenization(text):
-    tokens = re.split(' ', text)
-    return tokens
-
-def remove_stopwords(text):
-    output = " ".join(i for i in text if i not in stopwords)
-    return output
-
-def lemmatizer(text):
-    nlp = spacy.load('en_core_web_sm')
-    doc = nlp(text)
-    sent = [token.lemma_ for token in doc if not token.text in set(stopwords)]
-    return ' '.join(sent)
-
-# Streamlit interface
-st.title("Instagram Threads Sentiment Analysis App")
-st.markdown("By Roshni Nekkanti")
-image = Image.open("sentiment.png")
-st.image(image, use_column_width=True)
-
-st.subheader("Enter your text here:")
-user_input = st.text_area("")
-
-# Preprocess the user input
 if user_input:
     user_input = clean_text(user_input)
     user_input = remove_punctuation(user_input)
+    user_input = user_input.lower()
     user_input = tokenization(user_input)
     user_input = remove_stopwords(user_input)
     user_input = lemmatizer(user_input)
-    user_input = ' '.join(user_input)  # Rejoin tokens into a single string
 
-# Predict sentiment when button is clicked
-if st.button("Predict"):
-    if user_input:
-        # Transform the preprocessed text
-        text_vectorized = vectorizer.transform([user_input])  # Pass as a string
-        prediction = model.predict(text_vectorized)[0]
-        st.header("Prediction:")
-        if prediction == -1:
-            st.subheader("The sentiment of the given text is: Negative")
-        elif prediction == 0:
-            st.subheader("The sentiment of the given text is: Neutral")
-        elif prediction == 1:
-            st.subheader("The sentiment of the given text is: Positive")
-    else:
-        st.subheader("Please enter a text for prediction.")
+    # Vectorizing the text
+    text_vectorized = vectorizer.transform([user_input])
 
+    # Debug: Display the shape of the transformed text in Colab output
+    print(f"Shape of transformed text: {text_vectorized.shape}")
+
+    # Prediction
+    prediction = model.predict(text_vectorized)[0]
+
+    # Display the prediction result
+    if prediction == -1:
+        print("The sentiment of the given text is: Negative")
+    elif prediction == 0:
+        print("The sentiment of the given text is: Neutral")
+    elif prediction == 1:
+        print("The sentiment of the given text is: Positive")
+else:
+    print("Please enter a text for prediction.")
