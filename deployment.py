@@ -11,59 +11,62 @@ Original file is located at
 
 import streamlit as st
 import pickle
-from sklearn.feature_extraction.text import TfidfVectorizer
-from PIL import Image
 import re
 import string
 import nltk
 import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from PIL import Image
 
+# Download necessary NLTK resources
+nltk.download('stopwords')
+stopwords = nltk.corpus.stopwords.words('english')
+
+# Load the pre-trained model and vectorizer
 with open("svm_model (3).pkl", "rb") as file:
     model = pickle.load(file)
 
 with open("tfidf_vectorizer (3).pkl", "rb") as file:
     vectorizer = pickle.load(file)
 
-print(f"Streamlit version: {st.__version__}")
-
-nltk.download('stopwords')
-stopwords = nltk.corpus.stopwords.words('english')
-
+# Function to clean the input text
 def clean_text(text):
-    if isinstance(text, str):  # Check if the text is a string
-        text = text.lower()  # Convert text to lowercase
-        return text.strip()  # Remove leading and trailing whitespaces
-    return ""
+    text = text.lower()
+    return text.strip()
 
+# Function to remove punctuation from text
 def remove_punctuation(text):
     punctuation_free = "".join([i for i in text if i not in string.punctuation])
     return punctuation_free
 
+# Tokenization function to split the text
 def tokenization(text):
     tokens = re.split(' ', text)
     return tokens
 
+# Remove stopwords from the text
 def remove_stopwords(text):
     output = " ".join(i for i in text if i not in stopwords)
     return output
 
+# Lemmatization function using SpaCy
 def lemmatizer(text):
     nlp = spacy.load('en_core_web_sm')
     doc = nlp(text)
-    sent = [token.lemma_ for token in doc if not token.text in set(stopwords)]
+    sent = [token.lemma_ for token in doc if token.text not in set(stopwords)]
     return ' '.join(sent)
 
-st.title("Instagram Threads Sentiment Analysis App")
+# Streamlit title and introduction
+st.title("Mercari Sentiment Analysis App")
 st.markdown("By Roshni Nekkanti")
 image = Image.open("sentiment.png")
 st.image(image, use_column_width=True)
 
+# User input section
 st.subheader("Enter your text here:")
+user_input = st.text_area("")
 
-
-user_input = "such an amazing app to use, best selling app"
-
-
+# Preprocess the user input text
 if user_input:
     user_input = clean_text(user_input)
     user_input = remove_punctuation(user_input)
@@ -72,22 +75,26 @@ if user_input:
     user_input = remove_stopwords(user_input)
     user_input = lemmatizer(user_input)
 
-if user_input:
-    # Vectorizing the text
-    text_vectorized = vectorizer.transform([user_input])
+# Prediction button
+if st.button("Predict"):
+    if user_input:
+        text_vectorized = vectorizer.transform([user_input])
+        # Debug: Show the shape of transformed text
+        print(f"Shape of transformed text: {text_vectorized.shape}")
+        prediction = model.predict(text_vectorized)[0]
+        
+        # Display the sentiment result
+        st.header("Prediction:")
+        if prediction == -1:
+            st.subheader("The sentiment of the given text is: Negative")
+        elif prediction == 0:
+            st.subheader("The sentiment of the given text is: Neutral")
+        elif prediction == 1:
+            st.subheader("The sentiment of the given text is: Positive")
+    else:
+        st.subheader("Please enter a text for prediction.")
 
-    # Debug: Display the shape of the transformed text in Colab output
-    print(f"Shape of transformed text: {text_vectorized.shape}")
+# Optionally, debug: Check vectorizer vocabulary size
+vocab_size = len(vectorizer.vocabulary_)
+print(f"Vectorizer Vocabulary Size: {vocab_size}")
 
-    # Prediction
-    prediction = model.predict(text_vectorized)[0]
-
-    # Display the prediction result
-    if prediction == -1:
-        print("The sentiment of the given text is: Negative")
-    elif prediction == 0:
-        print("The sentiment of the given text is: Neutral")
-    elif prediction == 1:
-        print("The sentiment of the given text is: Positive")
-else:
-    print("Please enter a text for prediction.")
