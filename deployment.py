@@ -23,10 +23,10 @@ nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
 # Load the pre-trained model and vectorizer
-with open("svm_model (3).pkl", "rb") as file:
+with open("svm_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-with open("tfidf_vectorizer (3).pkl", "rb") as file:
+with open("tfidf_vectorizer.pkl", "rb") as file:
     vectorizer = pickle.load(file)
 
 # Function to clean the input text
