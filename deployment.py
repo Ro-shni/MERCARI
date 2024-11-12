@@ -53,7 +53,7 @@ def lemmatizer(text):
 
 st.title("Instagram Threads Sentiment Analysis App")
 st.markdown("By Roshni Nekkanti")
-image = Image.open("sentiment.jpg")
+image = Image.open("sentiment.png")
 st.image(image, use_column_width=True)
 
 st.subheader("Enter your text here:")
